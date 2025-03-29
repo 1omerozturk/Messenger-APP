@@ -18,6 +18,18 @@ public class UserController : ControllerBase
         _jwtService = jwtService;
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+    {
+        var currentUserId = User.FindFirst("UserId")?.Value;
+        if (currentUserId == null)
+            return Unauthorized();
+            
+        var users = await _userService.GetAllUsersExceptCurrentAsync(currentUserId);
+        return Ok(users);
+    }
+
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(CreateUserDto createUserDto)
     {
@@ -154,5 +166,39 @@ public class UserController : ControllerBase
             return NotFound();
 
         return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<object>> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+    {
+        try
+        {
+            var user = await _userService.ValidateTokenAsync(refreshTokenDto.Token);
+            if (user == null)
+                return Unauthorized("Invalid token");
+
+            var newToken = _jwtService.GenerateToken(user);
+            return Ok(new { token = newToken });
+        }
+        catch (InvalidOperationException)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    [Authorize]
+    [HttpGet("profile")]
+    public async Task<ActionResult<UserDto>> GetProfile()
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (userId == null)
+            return Unauthorized();
+
+        var user = await _userService.GetByIdAsync(userId);
+        if (user == null)
+            return NotFound();
+
+        return Ok(user);
     }
 }

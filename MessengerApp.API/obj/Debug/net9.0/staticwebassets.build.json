@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "wjZlcaR0nZeUat80dXpk1pTtDmnuINapp60LRuyJoBY=",
+  "Source": "MessengerApp.API",
+  "BasePath": "_content/MessengerApp.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -5,11 +5,10 @@ namespace MessengerApp.Core.Repositories;
 
 public interface IBaseRepository<T> where T : BaseEntity
 {
-    Task<T> GetByIdAsync(string id);
+    Task<T?> GetByIdAsync(string id);
     Task<IEnumerable<T>> GetAllAsync();
+    Task<T> CreateAsync(T entity);
+    Task UpdateAsync(T entity);
+    Task DeleteAsync(string id);
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-    Task<T> AddAsync(T entity);
-    Task<bool> UpdateAsync(T entity);
-    Task<bool> DeleteAsync(string id);
-    Task<bool> SoftDeleteAsync(string id);
 } 

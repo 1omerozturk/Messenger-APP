@@ -2,6 +2,7 @@ using MessengerApp.Core.DTOs.User;
 using MessengerApp.Core.Entities;
 using MessengerApp.Core.Repositories;
 using MessengerApp.Core.Services;
+using MongoDB.Bson;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,16 +11,18 @@ namespace MessengerApp.Business.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IJwtService _jwtService;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IJwtService jwtService)
     {
         _userRepository = userRepository;
+        _jwtService = jwtService;
     }
 
-    public async Task<UserDto> GetByIdAsync(string id)
+    public async Task<UserDto?> GetByIdAsync(string id)
     {
         var user = await _userRepository.GetByIdAsync(id);
-        return MapToDto(user);
+        return user != null ? MapToDto(user) : null;
     }
 
     public async Task<UserDto> GetByUsernameAsync(string username)
@@ -40,14 +43,15 @@ public class UserService : IUserService
 
         var user = new User
         {
+            Id = ObjectId.GenerateNewId().ToString(),
             Username = createUserDto.Username,
             Email = createUserDto.Email,
-            Password = HashPassword(createUserDto.Password),
+            PasswordHash = HashPassword(createUserDto.Password),
             FirstName = createUserDto.FirstName,
             LastName = createUserDto.LastName
         };
 
-        await _userRepository.AddAsync(user);
+        await _userRepository.CreateAsync(user);
         return MapToDto(user);
     }
 
@@ -60,6 +64,7 @@ public class UserService : IUserService
         user.FirstName = updateUserDto.FirstName;
         user.LastName = updateUserDto.LastName;
         user.ProfilePicture = updateUserDto.ProfilePicture;
+        user.UpdatedAt = DateTime.UtcNow;
 
         await _userRepository.UpdateAsync(user);
         return MapToDto(user);
@@ -67,7 +72,14 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteAsync(string id)
     {
-        return await _userRepository.SoftDeleteAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null)
+            return false;
+
+        user.IsDeleted = true;
+        user.UpdatedAt = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user);
+        return true;
     }
 
     public async Task<UserDto> LoginAsync(UserLoginDto loginDto)
@@ -76,7 +88,7 @@ public class UserService : IUserService
         if (user == null)
             throw new InvalidOperationException("Invalid username or password");
 
-        if (user.Password != HashPassword(loginDto.Password))
+        if (user.PasswordHash != HashPassword(loginDto.Password))
             throw new InvalidOperationException("Invalid username or password");
 
         return MapToDto(user);
@@ -103,7 +115,7 @@ public class UserService : IUserService
     public async Task<IEnumerable<UserDto>> GetUserContactsAsync(string userId)
     {
         var contacts = await _userRepository.GetUserContactsAsync(userId);
-        return contacts.Select(MapToDto);
+        return contacts.Select(MapToDto).Where(dto => dto != null).Select(dto => dto!);
     }
 
     public async Task<bool> BlockUserAsync(UserContactDto contactDto)
@@ -118,7 +130,8 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateOnlineStatusAsync(string userId, bool isOnline)
     {
-        return await _userRepository.UpdateOnlineStatusAsync(userId, isOnline);
+        await _userRepository.UpdateOnlineStatusAsync(userId, isOnline);
+        return true;
     }
 
     public async Task<bool> UpdateLastSeenAsync(string userId)
@@ -126,7 +139,33 @@ public class UserService : IUserService
         return await _userRepository.UpdateLastSeenAsync(userId);
     }
 
-    private static UserDto MapToDto(User user)
+    public async Task<UserDto?> ValidateTokenAsync(string token)
+    {
+        try
+        {
+            var userId = _jwtService.GetUserIdFromToken(token);
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            return await GetByIdAsync(userId);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<IEnumerable<UserDto>> GetAllUsersExceptCurrentAsync(string currentUserId)
+    {
+        var users = await _userRepository.GetAllAsync();
+        return users
+            .Where(u => u.Id != currentUserId && !u.IsDeleted)
+            .Select(MapToDto)
+            .Where(dto => dto != null)
+            .Select(dto => dto!);
+    }
+
+    private static UserDto? MapToDto(User? user)
     {
         if (user == null)
             return null;

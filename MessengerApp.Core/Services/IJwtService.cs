@@ -5,4 +5,5 @@ namespace MessengerApp.Core.Services;
 public interface IJwtService
 {
     string GenerateToken(UserDto user);
+    string GetUserIdFromToken(string token);
 }

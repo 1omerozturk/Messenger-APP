@@ -17,4 +17,6 @@ public interface IUserService
     Task<bool> UnblockUserAsync(UserContactDto contactDto);
     Task<bool> UpdateOnlineStatusAsync(string userId, bool isOnline);
     Task<bool> UpdateLastSeenAsync(string userId);
+    Task<UserDto?> ValidateTokenAsync(string token);
+    Task<IEnumerable<UserDto>> GetAllUsersExceptCurrentAsync(string currentUserId);
 } 

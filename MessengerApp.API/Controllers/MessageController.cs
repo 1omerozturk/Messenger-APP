@@ -84,17 +84,16 @@ public class MessageController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("read/all/{receiverId}")]
-    public async Task<IActionResult> MarkAllAsRead(string receiverId)
+    [HttpPost("read/all/{userId}")]
+    public async Task<IActionResult> MarkAllAsRead(string userId)
     {
-        var senderId = User.FindFirst("UserId")?.Value;
-        if (senderId == null)
+        var currentUserId = User.FindFirst("UserId")?.Value;
+        if (currentUserId == null)
             return Unauthorized();
 
-        var result = await _messageService.MarkAllAsReadAsync(senderId, receiverId);
-        if (!result)
-            return NotFound();
-
+        // Yeni bir sohbet başlattığımızda, henüz mesaj yok, bu nedenle false dönebilir
+        // Bu durumda NotFound yerine Ok dönmek daha mantıklı
+        await _messageService.MarkAllAsReadAsync(userId, currentUserId);
         return Ok();
     }
 
@@ -106,5 +105,17 @@ public class MessageController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    [HttpDelete("conversation/{userId}")]
+    public async Task<IActionResult> DeleteConversation(string userId)
+    {
+        var currentUserId = User.FindFirst("UserId")?.Value;
+        if (currentUserId == null)
+            return Unauthorized();
+            
+        var result = await _messageService.DeleteConversationAsync(currentUserId, userId);
+        
+        return Ok(new { success = result });
     }
 } 

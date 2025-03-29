@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using MessengerApp.Core.Entities;
 using MessengerApp.Core.Settings;
 using MongoDB.Driver;
@@ -7,13 +8,16 @@ namespace MessengerApp.Data.Context;
 public class MongoDbContext
 {
     private readonly IMongoDatabase _database;
-    private readonly MongoDbSettings _settings;
+    public readonly MongoDbSettings _settings;
 
-    public MongoDbContext(MongoDbSettings settings)
+    public string UsersCollectionName => _settings.UsersCollectionName;
+    public string MessagesCollectionName => _settings.MessagesCollectionName;
+
+    public MongoDbContext(IOptions<MongoDbSettings> settings)
     {
-        _settings = settings;
-        var client = new MongoClient(settings.ConnectionString);
-        _database = client.GetDatabase(settings.DatabaseName);
+        _settings = settings.Value;
+        var client = new MongoClient(_settings.ConnectionString);
+        _database = client.GetDatabase(_settings.DatabaseName);
     }
 
     public IMongoCollection<User> Users => 
@@ -21,4 +25,9 @@ public class MongoDbContext
 
     public IMongoCollection<Message> Messages => 
         _database.GetCollection<Message>(_settings.MessagesCollectionName);
+
+    public IMongoCollection<T> GetCollection<T>(string collectionName)
+    {
+        return _database.GetCollection<T>(collectionName);
+    }
 } 

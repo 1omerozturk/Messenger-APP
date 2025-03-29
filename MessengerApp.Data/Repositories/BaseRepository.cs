@@ -6,59 +6,48 @@ using MongoDB.Driver;
 
 namespace MessengerApp.Data.Repositories;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+public abstract class BaseRepository<T> where T : BaseEntity
 {
-    protected readonly IMongoCollection<T> _collection;
+    protected readonly IMongoCollection<T> Collection;
 
-    public BaseRepository(MongoDbContext context, string collectionName)
+    protected BaseRepository(MongoDbContext context, string collectionName)
     {
-        _collection = context._database.GetCollection<T>(collectionName);
+        Collection = context.GetCollection<T>(collectionName);
     }
 
-    public async Task<T> GetByIdAsync(string id)
+    public virtual async Task<T?> GetByIdAsync(string id)
     {
-        return await _collection.Find(x => x.Id == id && !x.IsDeleted)
-            .FirstOrDefaultAsync();
+        return await Collection.Find(x => x.Id == id && !x.IsDeleted).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _collection.Find(x => !x.IsDeleted)
-            .ToListAsync();
+        return await Collection.Find(x => !x.IsDeleted).ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<T> CreateAsync(T entity)
     {
-        return await _collection.Find(predicate)
-            .ToListAsync();
-    }
-
-    public async Task<T> AddAsync(T entity)
-    {
-        await _collection.InsertOneAsync(entity);
+        await Collection.InsertOneAsync(entity);
         return entity;
     }
 
-    public async Task<bool> UpdateAsync(T entity)
+    public virtual async Task UpdateAsync(T entity)
     {
         entity.UpdatedAt = DateTime.UtcNow;
-        var result = await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
-        return result.ModifiedCount > 0;
+        await Collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
     }
 
-    public async Task<bool> DeleteAsync(string id)
-    {
-        var result = await _collection.DeleteOneAsync(x => x.Id == id);
-        return result.DeletedCount > 0;
-    }
-
-    public async Task<bool> SoftDeleteAsync(string id)
+    public virtual async Task DeleteAsync(string id)
     {
         var update = Builders<T>.Update
             .Set(x => x.IsDeleted, true)
             .Set(x => x.UpdatedAt, DateTime.UtcNow);
-            
-        var result = await _collection.UpdateOneAsync(x => x.Id == id, update);
-        return result.ModifiedCount > 0;
+        await Collection.UpdateOneAsync(x => x.Id == id, update);
+    }
+
+    public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await Collection.Find(predicate)
+            .ToListAsync();
     }
 } 

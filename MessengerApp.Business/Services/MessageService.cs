@@ -2,6 +2,7 @@ using MessengerApp.Core.DTOs.Message;
 using MessengerApp.Core.Entities;
 using MessengerApp.Core.Repositories;
 using MessengerApp.Core.Services;
+using MongoDB.Bson;
 
 namespace MessengerApp.Business.Services;
 
@@ -16,7 +17,7 @@ public class MessageService : IMessageService
         _userRepository = userRepository;
     }
 
-    public async Task<MessageDto> GetByIdAsync(string id)
+    public async Task<MessageDto?> GetByIdAsync(string id)
     {
         var message = await _messageRepository.GetByIdAsync(id);
         return MapToDto(message);
@@ -40,6 +41,7 @@ public class MessageService : IMessageService
 
         var message = new Message
         {
+            Id = ObjectId.GenerateNewId().ToString(),
             SenderId = senderId,
             ReceiverId = createMessageDto.ReceiverId,
             Content = createMessageDto.Content,
@@ -47,13 +49,20 @@ public class MessageService : IMessageService
             AttachmentUrl = createMessageDto.AttachmentUrl
         };
 
-        await _messageRepository.AddAsync(message);
+        await _messageRepository.CreateAsync(message);
         return MapToDto(message);
     }
 
     public async Task<bool> DeleteAsync(string id)
     {
-        return await _messageRepository.SoftDeleteAsync(id);
+        var message = await _messageRepository.GetByIdAsync(id);
+        if (message == null)
+            return false;
+
+        message.IsDeleted = true;
+        message.UpdatedAt = DateTime.UtcNow;
+        await _messageRepository.UpdateAsync(message);
+        return true;
     }
 
     public async Task<IEnumerable<MessageDto>> GetUnreadMessagesAsync(string userId)
@@ -107,7 +116,31 @@ public class MessageService : IMessageService
         return conversations.OrderByDescending(x => x.LastMessageTime);
     }
 
-    private static MessageDto MapToDto(Message message)
+    public async Task<bool> DeleteConversationAsync(string userId, string otherUserId)
+    {
+        try
+        {
+            // İki yönlü tüm mesajları siliniyor
+            var messages = await _messageRepository.GetConversationAsync(userId, otherUserId);
+            
+            foreach (var message in messages)
+            {
+                message.IsDeleted = true;
+                message.UpdatedAt = DateTime.UtcNow;
+                await _messageRepository.UpdateAsync(message);
+            }
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Hata durumunda loglama yapabilirsiniz
+            Console.WriteLine($"Error deleting conversation: {ex.Message}");
+            return false;
+        }
+    }
+
+    private static MessageDto? MapToDto(Message? message)
     {
         if (message == null)
             return null;

@@ -8,7 +8,7 @@ namespace MessengerApp.Data.Repositories;
 
 public class MessageRepository : BaseRepository<Message>, IMessageRepository
 {
-    public MessageRepository(MongoDbContext context) : base(context, context._settings.MessagesCollectionName)
+    public MessageRepository(MongoDbContext context) : base(context, context.MessagesCollectionName)
     {
     }
 
@@ -28,7 +28,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
             Builders<Message>.Filter.Eq(x => x.IsDeleted, false)
         );
 
-        return await _collection.Find(filter)
+        return await Collection.Find(filter)
             .SortByDescending(x => x.CreatedAt)
             .Skip(skip)
             .Limit(take)
@@ -37,7 +37,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
 
     public async Task<IEnumerable<Message>> GetUnreadMessagesAsync(string userId)
     {
-        return await _collection.Find(x => x.ReceiverId == userId && !x.IsRead && !x.IsDeleted)
+        return await Collection.Find(x => x.ReceiverId == userId && !x.IsRead && !x.IsDeleted)
             .SortByDescending(x => x.CreatedAt)
             .ToListAsync();
     }
@@ -49,7 +49,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
             .Set(x => x.ReadAt, DateTime.UtcNow)
             .Set(x => x.UpdatedAt, DateTime.UtcNow);
 
-        var result = await _collection.UpdateOneAsync(x => x.Id == messageId, update);
+        var result = await Collection.UpdateOneAsync(x => x.Id == messageId, update);
         return result.ModifiedCount > 0;
     }
 
@@ -67,7 +67,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
             .Set(x => x.ReadAt, DateTime.UtcNow)
             .Set(x => x.UpdatedAt, DateTime.UtcNow);
 
-        var result = await _collection.UpdateManyAsync(filter, update);
+        var result = await Collection.UpdateManyAsync(filter, update);
         return result.ModifiedCount > 0;
     }
 
@@ -79,7 +79,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
             Builders<Message>.Filter.Eq(x => x.IsDeleted, false)
         );
 
-        return (int)await _collection.CountDocumentsAsync(filter);
+        return (int)await Collection.CountDocumentsAsync(filter);
     }
 
     public async Task<IEnumerable<Message>> GetLastMessagesAsync(string userId, int count = 20)
@@ -89,7 +89,7 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
             Builders<Message>.Filter.Eq(x => x.ReceiverId, userId)
         );
 
-        return await _collection.Find(filter)
+        return await Collection.Find(filter)
             .SortByDescending(x => x.CreatedAt)
             .Limit(count)
             .ToListAsync();

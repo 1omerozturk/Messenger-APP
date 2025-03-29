@@ -23,7 +23,7 @@ public class ChatHub : Hub
         {
             _userConnections[userId] = Context.ConnectionId;
             await _userService.UpdateOnlineStatusAsync(userId, true);
-            await Clients.All.SendAsync("UserOnline", userId);
+            await Clients.All.SendAsync("UserStatusChanged", userId, true);
         }
 
         await base.OnConnectedAsync();
@@ -36,7 +36,7 @@ public class ChatHub : Hub
         {
             _userConnections.Remove(userId);
             await _userService.UpdateOnlineStatusAsync(userId, false);
-            await Clients.All.SendAsync("UserOffline", userId);
+            await Clients.All.SendAsync("UserStatusChanged", userId, false);
         }
 
         await base.OnDisconnectedAsync(exception);

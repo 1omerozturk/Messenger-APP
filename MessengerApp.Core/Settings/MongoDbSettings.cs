@@ -2,8 +2,8 @@ namespace MessengerApp.Core.Settings;
 
 public class MongoDbSettings
 {
-    public string ConnectionString { get; set; }
-    public string DatabaseName { get; set; }
-    public string UsersCollectionName { get; set; } = "Users";
-    public string MessagesCollectionName { get; set; } = "Messages";
+    public required string ConnectionString { get; set; }
+    public required string DatabaseName { get; set; }
+    public required string UsersCollectionName { get; set; } = "Users";
+    public required string MessagesCollectionName { get; set; } = "Messages";
 } 

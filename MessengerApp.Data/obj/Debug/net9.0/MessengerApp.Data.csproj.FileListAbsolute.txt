@@ -1,0 +1,15 @@
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.csproj.AssemblyReference.cache
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.AssemblyInfoInputs.cache
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.AssemblyInfo.cs
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.csproj.CoreCompileInputs.cache
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\bin\Debug\net9.0\MessengerApp.Data.deps.json
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\bin\Debug\net9.0\MessengerApp.Data.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\bin\Debug\net9.0\MessengerApp.Data.pdb
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\bin\Debug\net9.0\MessengerApp.Core.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\bin\Debug\net9.0\MessengerApp.Core.pdb
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\Messenge.CED68E5C.Up2Date
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\refint\MessengerApp.Data.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\MessengerApp.Data.pdb
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Data\obj\Debug\net9.0\ref\MessengerApp.Data.dll

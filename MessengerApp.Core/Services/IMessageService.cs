@@ -13,4 +13,5 @@ public interface IMessageService
     Task<bool> MarkAllAsReadAsync(string senderId, string receiverId);
     Task<int> GetUnreadMessageCountAsync(string userId);
     Task<IEnumerable<ConversationDto>> GetConversationsAsync(string userId);
+    Task<bool> DeleteConversationAsync(string userId, string otherUserId);
 } 
