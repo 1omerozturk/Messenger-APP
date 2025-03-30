@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using DotNetEnv;
 using MessengerApp.Core.Settings;
 using MessengerApp.Core.Repositories;
 using MessengerApp.Core.Services;
@@ -12,12 +13,35 @@ using MessengerApp.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection("MongoDb"));
+// .env Dosyasını Yükle
+Env.Load();
 
-builder.Services.Configure<JwtSettings>(
-    builder.Configuration.GetSection("Jwt"));
+// Ortam Değişkenlerini Oku
+var mongoConnectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+
+if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("Çevresel değişkenler eksik! .env dosyanızı kontrol edin.");
+}
+
+// MongoDB Ayarlarını Yükle
+builder.Services.Configure<MongoDbSettings>(options =>
+{
+    options.ConnectionString = mongoConnectionString;
+    options.DatabaseName = builder.Configuration["MongoDb:DatabaseName"];
+    options.UsersCollectionName = builder.Configuration["MongoDb:UsersCollectionName"];
+    options.MessagesCollectionName = builder.Configuration["MongoDb:MessagesCollectionName"];
+});
+
+// JWT Ayarlarını Yükle
+builder.Services.Configure<JwtSettings>(options =>
+{
+    options.Key = jwtKey;
+    options.Issuer = builder.Configuration["Jwt:Issuer"];
+    options.Audience = builder.Configuration["Jwt:Audience"];
+    options.ExpiryInMinutes = int.Parse(builder.Configuration["Jwt:ExpiryInMinutes"] ?? "1440");
+});
 
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -30,22 +54,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add SignalR
+// SignalR Entegrasyonu
 builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
 });
 
-// Add JWT Authentication
+// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwtKey = builder.Configuration["Jwt:Key"];
-        if (string.IsNullOrEmpty(jwtKey))
-        {
-            throw new InvalidOperationException("JWT Key is not configured");
-        }
-
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -74,18 +92,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add CORS
+// CORS Ayarları
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy =>
         {
-            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
-            if (allowedOrigins == null || !allowedOrigins.Any())
-            {
-                allowedOrigins = new[] { "http://localhost:3000" };
-            }
-
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000" };
             policy.WithOrigins(allowedOrigins)
                   .AllowAnyMethod()
                   .AllowAnyHeader()
@@ -95,7 +108,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// HTTP Middleware Yapılandırması
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -104,18 +117,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-
-// Add custom middleware
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<ErrorHandlingMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");
 
-// Add SignalR authentication
+// SignalR İçin Authentication Middleware
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/chatHub"))

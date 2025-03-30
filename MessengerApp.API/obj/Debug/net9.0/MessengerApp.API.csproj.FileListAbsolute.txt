@@ -59,3 +59,5 @@ C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\obj\Debug\net9.0\refint\Me
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\obj\Debug\net9.0\MessengerApp.API.pdb
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\obj\Debug\net9.0\MessengerApp.API.genruntimeconfig.cache
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\obj\Debug\net9.0\ref\MessengerApp.API.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\bin\Debug\net9.0\DotNetEnv.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.API\bin\Debug\net9.0\Sprache.dll
