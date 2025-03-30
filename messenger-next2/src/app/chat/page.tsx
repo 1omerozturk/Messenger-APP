@@ -166,7 +166,7 @@ export default function Chat() {
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
               <img
-                src={"http://localhost:5223/"+user.profilePicture || "/default-avatar.png"}
+                src={user.profilePicture&&("http://localhost:5223"+user.profilePicture)|| "/default-avatar.png"}
                 alt={user.username}
                 className="w-10 h-10 rounded-full"
               />
@@ -235,7 +235,7 @@ export default function Chat() {
                       <div className="relative">
                         <img
                           src={
-                            conversation.profilePicture || "/default-avatar.png"
+                            "http://localhost:5223"+conversation.profilePicture || "/default-avatar.png"
                           }
                           alt={conversation.username}
                           className="w-10 h-10 rounded-full"
@@ -310,7 +310,7 @@ export default function Chat() {
                 <div className="flex items-center">
                   <div className="relative">
                     <img
-                      src={user.profilePicture || "/default-avatar.png"}
+                      src={"http://localhost:5223"+user.profilePicture || "/default-avatar.png"}
                       alt={user.username}
                       className="w-10 h-10 rounded-full"
                     />
