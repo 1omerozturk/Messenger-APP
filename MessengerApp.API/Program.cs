@@ -10,6 +10,7 @@ using MessengerApp.Data.Repositories;
 using MessengerApp.Business.Services;
 using MessengerApp.API.Hubs;
 using MessengerApp.API.Middleware;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -119,6 +121,21 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+// Configure static file middleware for uploads
+app.UseStaticFiles(); // This will serve files from wwwroot by default
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

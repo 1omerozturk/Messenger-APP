@@ -48,7 +48,8 @@ public class UserService : IUserService
             Email = createUserDto.Email,
             PasswordHash = HashPassword(createUserDto.Password),
             FirstName = createUserDto.FirstName,
-            LastName = createUserDto.LastName
+            LastName = createUserDto.LastName,
+            ProfilePicture = createUserDto.ProfilePicture
         };
 
         await _userRepository.CreateAsync(user);

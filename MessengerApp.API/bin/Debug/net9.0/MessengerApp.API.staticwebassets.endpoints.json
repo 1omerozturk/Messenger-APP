@@ -1,5 +1,88 @@
 {
   "Version": 1,
   "ManifestType": "Build",
-  "Endpoints": []
+  "Endpoints": [
+    {
+      "Route": "uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.eif7sapst3.jpeg",
+      "AssetFile": "uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "421309"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rt4dPt8Ly6csNgn2BKBAdS61ZZoFRv9/4y2FQyMNaWg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 30 Mar 2025 18:29:12 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "eif7sapst3"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Rt4dPt8Ly6csNgn2BKBAdS61ZZoFRv9/4y2FQyMNaWg="
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg"
+        }
+      ]
+    },
+    {
+      "Route": "uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg",
+      "AssetFile": "uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "421309"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rt4dPt8Ly6csNgn2BKBAdS61ZZoFRv9/4y2FQyMNaWg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 30 Mar 2025 18:29:12 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Rt4dPt8Ly6csNgn2BKBAdS61ZZoFRv9/4y2FQyMNaWg="
+        }
+      ]
+    }
+  ]
 }

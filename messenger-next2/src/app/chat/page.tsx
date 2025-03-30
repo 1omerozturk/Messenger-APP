@@ -166,7 +166,7 @@ export default function Chat() {
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
               <img
-                src={user.profilePicture || "/default-avatar.png"}
+                src={"http://localhost:5223/"+user.profilePicture || "/default-avatar.png"}
                 alt={user.username}
                 className="w-10 h-10 rounded-full"
               />

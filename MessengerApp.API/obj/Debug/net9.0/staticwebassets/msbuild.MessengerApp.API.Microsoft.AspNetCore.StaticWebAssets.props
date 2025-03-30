@@ -1,0 +1,22 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\profile_pictures\65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>MessengerApp.API</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/MessengerApp.API</BasePath>
+      <RelativePath>uploads/profile_pictures/65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>eif7sapst3</Fingerprint>
+      <Integrity>Rt4dPt8Ly6csNgn2BKBAdS61ZZoFRv9/4y2FQyMNaWg=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\profile_pictures\65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg'))</OriginalItemSpec>
+    </StaticWebAsset>
+  </ItemGroup>
+</Project>

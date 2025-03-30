@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\omero\\Desktop\\Messenger APP\\MessengerApp.API\\wwwroot\\uploads\\profile_pictures\\65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\profile_pictures\\65b51f92-fa21-4730-af9e-9a15f403beab_638789561523011460.jpeg"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.MessengerApp.API.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.MessengerApp.API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.MessengerApp.API.props",
+      "PackagePath": "build\\MessengerApp.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.MessengerApp.API.props",
+      "PackagePath": "buildMultiTargeting\\MessengerApp.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.MessengerApp.API.props",
+      "PackagePath": "buildTransitive\\MessengerApp.API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

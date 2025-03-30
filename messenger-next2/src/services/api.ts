@@ -89,6 +89,7 @@ export const authService = {
     password: string;
     firstName: string;
     lastName: string;
+    profilePicture?: string;
   }) => {
     const response = await api.post('/api/user/register', userData);
     return response.data;
@@ -107,6 +108,32 @@ export const authService = {
       console.error('Error refreshing token:', error);
       return null;
     }
+  },
+
+  uploadProfilePicture: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await axios.post(`${API_URL}/api/user/upload-profile-picture`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  updateProfilePicture: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_URL}/api/user/profile-picture`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+    });
+    return response.data;
   }
 };
 

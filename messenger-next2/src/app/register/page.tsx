@@ -1,22 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/services/api';
+import Image from 'next/image';
 
 export default function Register() {
   const router = useRouter();
   const { register } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     firstName: '',
     lastName: '',
+    profilePicture: '',
   });
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,6 +30,36 @@ export default function Register() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload the file
+    try {
+      setUploadingImage(true);
+      const response = await authService.uploadProfilePicture(file);
+      setFormData(prev => ({
+        ...prev,
+        profilePicture: response.profilePictureUrl,
+      }));
+    } catch (err) {
+      setError('Failed to upload profile picture. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,6 +98,61 @@ export default function Register() {
           {error && (
             <div className="text-sm text-red-600 text-center">{error}</div>
           )}
+          
+          {/* Profile Picture Upload */}
+          <div className="flex flex-col items-center">
+            <div 
+              onClick={triggerFileInput}
+              className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-300 cursor-pointer hover:opacity-90 transition-opacity mb-2"
+            >
+              {previewImage ? (
+                <Image 
+                  src={previewImage} 
+                  alt="Profile Preview" 
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-10 w-10 text-gray-400" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={1.5} 
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+                    />
+                  </svg>
+                </div>
+              )}
+              {uploadingImage && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            <button 
+              type="button"
+              onClick={triggerFileInput}
+              className="text-sm text-indigo-600 hover:text-indigo-800"
+            >
+              {formData.profilePicture ? 'Change profile picture' : 'Add profile picture'}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+          
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="sr-only">

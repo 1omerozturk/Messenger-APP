@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MessengerApp.Core.DTOs.User;
 using MessengerApp.Core.Services;
+using MessengerApp.API.Extensions;
 
 namespace MessengerApp.API.Controllers;
 
@@ -11,11 +12,13 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IJwtService _jwtService;
+    private readonly IFileService _fileService;
 
-    public UserController(IUserService userService, IJwtService jwtService)
+    public UserController(IUserService userService, IJwtService jwtService, IFileService fileService)
     {
         _userService = userService;
         _jwtService = jwtService;
+        _fileService = fileService;
     }
 
     [Authorize]
@@ -200,5 +203,68 @@ public class UserController : ControllerBase
             return NotFound();
 
         return Ok(user);
+    }
+
+    [HttpPost("upload-profile-picture")]
+    public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file)
+    {
+        if (file == null || !file.IsValidProfilePicture())
+            return BadRequest("Invalid file: Please upload a valid image file (JPEG, PNG, GIF) up to 5MB.");
+
+        // For temporary uploads before the user is registered
+        var tempUserId = Guid.NewGuid().ToString();
+        try
+        {
+            var fileUrl = await _fileService.UploadProfilePictureAsync(file, tempUserId);
+            return Ok(new { profilePictureUrl = fileUrl });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error uploading file: {ex.Message}");
+        }
+    }
+
+    [Authorize]
+    [HttpPost("profile-picture")]
+    public async Task<ActionResult<UserDto>> UpdateProfilePicture(IFormFile file)
+    {
+        if (file == null || !file.IsValidProfilePicture())
+            return BadRequest("Invalid file: Please upload a valid image file (JPEG, PNG, GIF) up to 5MB.");
+            
+        var userId = User.FindFirst("UserId")?.Value;
+        if (userId == null)
+            return Unauthorized();
+
+        try
+        {
+            // Get current user
+            var user = await _userService.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+
+            // Delete old profile picture if exists
+            if (!string.IsNullOrEmpty(user.ProfilePicture))
+            {
+                await _fileService.DeleteFileAsync(user.ProfilePicture);
+            }
+
+            // Upload new profile picture
+            var fileUrl = await _fileService.UploadProfilePictureAsync(file, userId);
+
+            // Update user profile
+            var updateDto = new UpdateUserDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePicture = fileUrl
+            };
+
+            var updatedUser = await _userService.UpdateAsync(userId, updateDto);
+            return Ok(updatedUser);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating profile picture: {ex.Message}");
+        }
     }
 }

@@ -59,15 +59,19 @@
           "dependencies": {
             "DotNetEnv": {
               "target": "Package",
-              "version": "[3.1.1, )"
+              "version": "[2.5.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[9.0.3, )"
+              "version": "[7.0.12, )"
+            },
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.3.0, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[7.0.12, )"
             },
             "Microsoft.AspNetCore.SignalR": {
               "target": "Package",
@@ -158,6 +162,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[8.7.0, )"
@@ -233,6 +241,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "MongoDB.Driver": {
               "target": "Package",
               "version": "[3.3.0, )"
