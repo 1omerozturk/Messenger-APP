@@ -52,12 +52,37 @@ MessengerApp/
    - Add user interface for chat
    - Implement file sharing UI
 
+## Screenshots
+
+### User Interface
+![User Interface](images/Ekran görüntüsü 2025-04-06 211721.png)
+
+### Message History
+![Message History](images/Ekran görüntüsü 2025-04-06 212124.png)
+
+### Group Chat Feature
+![Group Chat](images/Ekran görüntüsü 2025-04-06 212021.png)
+
+// Additional Screenshots
+### File Sharing Feature
+![File Sharing](images/Ekran görüntüsü 2025-04-06 212300.png)
+
+### Online/Offline Status
+![Online Offline Status](images/Ekran görüntüsü 2025-04-06 212400.png)
+
 ## Getting Started
 
 1. Clone the repository
 2. Configure MongoDB connection string in appsettings.json
-3. Run the backend API project
-4. (Coming soon) Run the frontend client
+3. Run the backend API project in terminal:
+- ``` bash cd MessengerApp.API ```
+- ``` dotnet build ```
+- ``` dotnet run ```
+4. Run the frontend clien:
+ - ```cd messenger-next2```
+ - ```npm run build```
+ - ``` npm run dev```
+
 
 ## Configuration
 

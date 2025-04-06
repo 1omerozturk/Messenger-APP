@@ -10,3 +10,4 @@ C:\Users\omero\Desktop\Messenger APP\MessengerApp.Core\obj\Debug\net9.0\Messenge
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.Core\obj\Debug\net9.0\refint\MessengerApp.Core.dll
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.Core\obj\Debug\net9.0\MessengerApp.Core.pdb
 C:\Users\omero\Desktop\Messenger APP\MessengerApp.Core\obj\Debug\net9.0\ref\MessengerApp.Core.dll
+C:\Users\omero\Desktop\Messenger APP\MessengerApp.Core\obj\Debug\net9.0\MessengerApp.Core.sourcelink.json
