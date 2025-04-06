@@ -54,26 +54,32 @@ MessengerApp/
 
 ## Screenshots
 
-### User Interface
-![User Interface](images/Ekran görüntüsü 2025-04-06 211721.png)
+### User Interface Login-DarkMode
+<img src="images/Ekran görüntüsü 2025-04-06 211721.png"/>
 
-### Message History
-![Message History](images/Ekran görüntüsü 2025-04-06 212124.png)
+### User Interface Login-LightMode
+<img src="images/Ekran görüntüsü 2025-04-06 211734.png"/>
 
-### Group Chat Feature
-![Group Chat](images/Ekran görüntüsü 2025-04-06 212021.png)
+### User Interface Register-DarkMode
+<img src="images/Ekran görüntüsü 2025-04-06 211803.png"/>
 
-// Additional Screenshots
-### File Sharing Feature
-![File Sharing](images/Ekran görüntüsü 2025-04-06 212300.png)
+### User Interface Register-LightMode
+<img src="images/Ekran görüntüsü 2025-04-06 211750.png"/>
 
-### Online/Offline Status
-![Online Offline Status](images/Ekran görüntüsü 2025-04-06 212400.png)
+### User Interface Register-LightMode
+<img src="images/Ekran görüntüsü 2025-04-06 211927.png"/>
+
+### User Interface Chat Light & Dark Mode
+<img src="images/Ekran görüntüsü 2025-04-06 212124.png"/>
+
+
 
 ## Getting Started
 
 1. Clone the repository
-2. Configure MongoDB connection string in appsettings.json
+ - ```git clone https://github.com/1omerozturk/Messenger-APP.git```
+ - ```git fork https://github.com/1omerozturk/Messenger-APP.git```
+2. Configure MongoDB connection string in appsettings.json and .env file add connection string.
 3. Run the backend API project in terminal:
 - ``` bash cd MessengerApp.API ```
 - ``` dotnet build ```
