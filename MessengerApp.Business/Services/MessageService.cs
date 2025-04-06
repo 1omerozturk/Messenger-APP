@@ -1,7 +1,9 @@
+using System.Text;
 using MessengerApp.Core.DTOs.Message;
 using MessengerApp.Core.Entities;
 using MessengerApp.Core.Repositories;
 using MessengerApp.Core.Services;
+using System.Security.Cryptography;
 using MongoDB.Bson;
 
 namespace MessengerApp.Business.Services;
@@ -122,14 +124,14 @@ public class MessageService : IMessageService
         {
             // İki yönlü tüm mesajları siliniyor
             var messages = await _messageRepository.GetConversationAsync(userId, otherUserId);
-            
+
             foreach (var message in messages)
             {
                 message.IsDeleted = true;
                 message.UpdatedAt = DateTime.UtcNow;
                 await _messageRepository.UpdateAsync(message);
             }
-            
+
             return true;
         }
         catch (Exception ex)
@@ -158,4 +160,11 @@ public class MessageService : IMessageService
             CreatedAt = message.CreatedAt
         };
     }
-} 
+
+    /*private static string HashMessage(string message)
+    {
+        using var sha256 = SHA256.Create();
+        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(message));
+        return Convert.ToBase64String(hashedBytes);
+    }*/
+}

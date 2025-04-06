@@ -1,1 +1,18 @@
 @import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  /* :root {
+    @apply transition-colors duration-500;
+  } */
+
+  /* /* .dark :where(*) {
+    @apply transition-colors duration-500;
+  } */
+
+  :not(.dark):where(*) {
+    @apply transition-colors duration-100;
+  } 
+}

@@ -19,4 +19,4 @@ public interface IUserService
     Task<bool> UpdateLastSeenAsync(string userId);
     Task<UserDto?> ValidateTokenAsync(string token);
     Task<IEnumerable<UserDto>> GetAllUsersExceptCurrentAsync(string currentUserId);
-} 
+}

@@ -132,6 +132,7 @@ public class UserService : IUserService
     public async Task<bool> UpdateOnlineStatusAsync(string userId, bool isOnline)
     {
         await _userRepository.UpdateOnlineStatusAsync(userId, isOnline);
+        await _userRepository.UpdateLastSeenAsync(userId);
         return true;
     }
 

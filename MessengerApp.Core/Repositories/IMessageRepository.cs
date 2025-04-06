@@ -10,4 +10,4 @@ public interface IMessageRepository : IBaseRepository<Message>
     Task<bool> MarkAllAsReadAsync(string senderId, string receiverId);
     Task<int> GetUnreadMessageCountAsync(string userId);
     Task<IEnumerable<Message>> GetLastMessagesAsync(string userId, int count = 20);
-} 
+}

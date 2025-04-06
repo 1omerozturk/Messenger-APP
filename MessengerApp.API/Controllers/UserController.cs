@@ -267,4 +267,8 @@ public class UserController : ControllerBase
             return StatusCode(500, $"Error updating profile picture: {ex.Message}");
         }
     }
+
+    //[Authorize]
+    //[ HttpGet("last-seen")]
+    //public async Task<ActionResult<DateTime>> GetLastSeenAsync(userId)
 }

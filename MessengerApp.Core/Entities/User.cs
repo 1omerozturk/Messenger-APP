@@ -32,4 +32,4 @@ public class User : BaseEntity
 
     public List<string> Contacts { get; set; } = new();
     public List<string> BlockedUsers { get; set; } = new();
-} 
+}

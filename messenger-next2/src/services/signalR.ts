@@ -1,5 +1,5 @@
-import * as signalR from '@microsoft/signalr';
-import { MessageDto } from '../types/message';
+import * as signalR from "@microsoft/signalr";
+import { MessageDto } from "../types/message";
 
 class SignalRService {
   private hubConnection: signalR.HubConnection | null = null;
@@ -7,7 +7,8 @@ class SignalRService {
   private typingHandlers: ((userId: string) => void)[] = [];
   private stoppedTypingHandlers: ((userId: string) => void)[] = [];
   private messageReadHandlers: ((messageId: string) => void)[] = [];
-  private userStatusHandlers: ((userId: string, isOnline: boolean) => void)[] = [];
+  private userStatusHandlers: ((userId: string, isOnline: boolean) => void)[] =
+    [];
   private connectionErrorHandlers: ((error: Error) => void)[] = [];
   private messageSentHandlers: ((message: MessageDto) => void)[] = [];
   private reconnectAttempts = 0;
@@ -18,16 +19,16 @@ class SignalRService {
   public async startConnection(token: string) {
     if (this.connectionStarting) return;
     this.connectionStarting = true;
-    
+
     try {
       if (this.hubConnection) {
         await this.hubConnection.stop();
       }
 
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('http://localhost:5223/chatHub', {
+        .withUrl("http://localhost:5223/chatHub", {
           accessTokenFactory: () => token,
-          withCredentials: true
+          withCredentials: true,
         })
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000]) // Retry intervals in milliseconds
         .build();
@@ -35,12 +36,14 @@ class SignalRService {
       this.setupHandlers();
       this.setupConnectionEvents();
       await this.hubConnection.start();
-      console.log('SignalR Connected successfully');
+      console.log("SignalR Connected successfully");
       this.reconnectAttempts = 0;
     } catch (error) {
-      console.error('Error starting SignalR connection:', error);
-      this.connectionErrorHandlers.forEach(handler => handler(error as Error));
-      
+      console.error("Error starting SignalR connection:", error);
+      this.connectionErrorHandlers.forEach((handler) =>
+        handler(error as Error)
+      );
+
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;
         setTimeout(() => {
@@ -56,24 +59,24 @@ class SignalRService {
   private setupConnectionEvents() {
     if (!this.hubConnection) return;
 
-    this.hubConnection.onreconnecting((error) => {
-      console.log('SignalR reconnecting...', error);
-      this.connectionErrorHandlers.forEach(handler => handler(error));
+    this.hubConnection.onreconnecting((error: any) => {
+      console.log("SignalR reconnecting...", error);
+      this.connectionErrorHandlers.forEach((handler) => handler(error));
     });
 
     this.hubConnection.onreconnected((connectionId) => {
-      console.log('SignalR reconnected with connection ID:', connectionId);
+      console.log("SignalR reconnected with connection ID:", connectionId);
       this.reconnectAttempts = 0;
     });
 
-    this.hubConnection.onclose((error) => {
-      console.log('SignalR connection closed', error);
-      this.connectionErrorHandlers.forEach(handler => handler(error));
-      
+    this.hubConnection.onclose((error: any) => {
+      console.log("SignalR connection closed", error);
+      this.connectionErrorHandlers.forEach((handler) => handler(error));
+
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;
         setTimeout(() => {
-          this.startConnection(this.hubConnection?.connectionId || '');
+          this.startConnection(this.hubConnection?.connectionId || "");
         }, this.reconnectTimeout);
       }
     });
@@ -82,100 +85,124 @@ class SignalRService {
   private setupHandlers() {
     if (!this.hubConnection) return;
 
-    this.hubConnection.on('ReceiveMessage', (message: MessageDto) => {
-      this.messageHandlers.forEach(handler => handler(message));
+    this.hubConnection.on("ReceiveMessage", (message: MessageDto) => {
+      this.messageHandlers.forEach((handler) => handler(message));
     });
 
-    this.hubConnection.on('MessageSent', (message: MessageDto) => {
-      this.messageSentHandlers.forEach(handler => handler(message));
+    this.hubConnection.on("MessageSent", (message: MessageDto) => {
+      this.messageSentHandlers.forEach((handler) => handler(message));
     });
 
-    this.hubConnection.on('UserTyping', (userId: string) => {
-      this.typingHandlers.forEach(handler => handler(userId));
+    this.hubConnection.on("UserTyping", (userId: string) => {
+      this.typingHandlers.forEach((handler) => handler(userId));
     });
 
-    this.hubConnection.on('UserStoppedTyping', (userId: string) => {
-      this.stoppedTypingHandlers.forEach(handler => handler(userId));
+    this.hubConnection.on("UserStoppedTyping", (userId: string) => {
+      this.stoppedTypingHandlers.forEach((handler) => handler(userId));
     });
 
-    this.hubConnection.on('MessageRead', (messageId: string) => {
-      this.messageReadHandlers.forEach(handler => handler(messageId));
+    this.hubConnection.on("MessageRead", (messageId: string) => {
+      this.messageReadHandlers.forEach((handler) => handler(messageId));
     });
 
-    this.hubConnection.on('UserStatusChanged', (userId: string, isOnline: boolean) => {
-      this.userStatusHandlers.forEach(handler => handler(userId, isOnline));
-    });
+    this.hubConnection.on(
+      "UserStatusChanged",
+      (userId: string, isOnline: boolean) => {
+        this.userStatusHandlers.forEach((handler) => handler(userId, isOnline));
+      }
+    );
   }
 
   public onConnectionError(handler: (error: Error) => void) {
     this.connectionErrorHandlers.push(handler);
     return () => {
-      this.connectionErrorHandlers = this.connectionErrorHandlers.filter(h => h !== handler);
+      this.connectionErrorHandlers = this.connectionErrorHandlers.filter(
+        (h) => h !== handler
+      );
     };
   }
 
   public onMessage(handler: (message: MessageDto) => void) {
     this.messageHandlers.push(handler);
     return () => {
-      this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
+      this.messageHandlers = this.messageHandlers.filter((h) => h !== handler);
     };
   }
 
   public onTyping(handler: (userId: string) => void) {
     this.typingHandlers.push(handler);
     return () => {
-      this.typingHandlers = this.typingHandlers.filter(h => h !== handler);
+      this.typingHandlers = this.typingHandlers.filter((h) => h !== handler);
     };
   }
 
   public onStoppedTyping(handler: (userId: string) => void) {
     this.stoppedTypingHandlers.push(handler);
     return () => {
-      this.stoppedTypingHandlers = this.stoppedTypingHandlers.filter(h => h !== handler);
+      this.stoppedTypingHandlers = this.stoppedTypingHandlers.filter(
+        (h) => h !== handler
+      );
     };
   }
 
-  public onUserStatusChange(handler: (userId: string, isOnline: boolean) => void) {
+  public onUserStatusChange(
+    handler: (userId: string, isOnline: boolean) => void
+  ) {
     this.userStatusHandlers.push(handler);
     return () => {
-      this.userStatusHandlers = this.userStatusHandlers.filter(h => h !== handler);
+      this.userStatusHandlers = this.userStatusHandlers.filter(
+        (h) => h !== handler
+      );
     };
   }
 
   public onMessageSent(handler: (message: MessageDto) => void) {
     this.messageSentHandlers.push(handler);
     return () => {
-      this.messageSentHandlers = this.messageSentHandlers.filter(h => h !== handler);
+      this.messageSentHandlers = this.messageSentHandlers.filter(
+        (h) => h !== handler
+      );
     };
   }
 
-  public async sendMessage(receiverId: string, content: string, type: string = 'Text') {
-    if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-      console.error('Cannot send message: SignalR not connected');
+  public async sendMessage(
+    receiverId: string,
+    content: string,
+    type: string = "Text"
+  ) {
+    if (
+      !this.hubConnection ||
+      this.hubConnection.state !== signalR.HubConnectionState.Connected
+    ) {
+      console.error("Cannot send message: SignalR not connected");
       return;
     }
-    
+
     try {
-      await this.hubConnection.invoke('SendMessage', { receiverId, content, type });
+      await this.hubConnection.invoke("SendMessage", {
+        receiverId,
+        content,
+        type,
+      });
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       throw error;
     }
   }
 
   public async startTyping(receiverId: string) {
     if (!this.hubConnection) return;
-    await this.hubConnection.invoke('Typing', receiverId);
+    await this.hubConnection.invoke("Typing", receiverId);
   }
 
   public async stopTyping(receiverId: string) {
     if (!this.hubConnection) return;
-    await this.hubConnection.invoke('StopTyping', receiverId);
+    await this.hubConnection.invoke("StopTyping", receiverId);
   }
 
   public async markMessageAsRead(messageId: string) {
     if (!this.hubConnection) return;
-    await this.hubConnection.invoke('MarkMessageAsRead', messageId);
+    await this.hubConnection.invoke("MarkMessageAsRead", messageId);
   }
 
   public async stopConnection() {
@@ -186,4 +213,4 @@ class SignalRService {
   }
 }
 
-export const signalRService = new SignalRService(); 
+export const signalRService = new SignalRService();

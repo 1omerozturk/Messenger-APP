@@ -11,4 +11,4 @@ public interface IBaseRepository<T> where T : BaseEntity
     Task UpdateAsync(T entity);
     Task DeleteAsync(string id);
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-} 
+}
