@@ -2,6 +2,18 @@
 
 This is a real-time messaging application built with .NET Web API, MongoDB, and SignalR that can be easily integrated into other projects.
 
+## *Clone Repo* 
+```
+git clone https://github.com/1omerozturk/Messenger-APP.git
+```
+
+## *Create .env File and Add this features* 
+```
+MONGO_CONNECTION_STRING=Your MongoDB connection string
+JWT_SECRET_KEY=Your JWT Secret Key
+```
+
+
 ## Technology Stack
 
 - Backend: .NET 8 Web API
